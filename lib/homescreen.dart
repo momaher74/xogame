@@ -45,8 +45,8 @@ class _HomeScreenState extends State<HomeScreen> {
             MyHeightSizedBox(x: 20),
             MyText(
               text: changePlayer
-                    ? 'Turn on [ O ] Player '.toUpperCase()
-                    : 'Turn on [ X ] Player '.toUpperCase(),
+                  ? 'Turn on [ O ] Player '.toUpperCase()
+                  : 'Turn on [ X ] Player '.toUpperCase(),
               fontSize: 25,
               color: Colors.white,
               fontWeight: FontWeight.w800,
@@ -63,24 +63,35 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: List.generate(
                   9,
                   (index) => InkWell(
-
                     borderRadius: BorderRadius.circular(12),
                     onTap: gameOver
                         ? null
                         : () {
                             if (player.playerX.contains(index) == false &&
                                 player.playerO.contains(index) == false) {
-                              withFriend
-                                  ? playFriend(index)
-                                  : playComputer(index);
-                              winnerPlayer();
+                              if (withFriend) {
+                                playFriend(index);
+                              }
+
+                              if (!withFriend) {
+                                playComputer(index);
+                              }
                               setState(() {
                                 print(changePlayer);
                                 changePlayer = !changePlayer;
                               });
-                              if(player.playerX.length==5){
+                              if (!withFriend &&gameOver==false ) {
+                                     computerTurn();
+                              }
+                              setState(() {
+                                print(changePlayer);
+                                changePlayer = !changePlayer;
+                              });
+                              winnerPlayer();
+
+                              if (player.playerX.length == 5) {
                                 setState(() {
-                                  gameOver=true ;
+                                  gameOver = true;
                                 });
                               }
                             }
@@ -179,25 +190,28 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void playComputer(int index) {
-    List emptyCells = [];
-    var random = Random();
-
+   playComputer(int index)  {
     if (changePlayer == false) {
       player.playerX.add(index);
     }
+  }
 
-    if (changePlayer == true) {
-      for (int i = 0; i < 9; i++) {
-        if (player.playerX.contains(i) == false &&
-            player.playerO.contains(i) == false) {
-          emptyCells.add(i);
+  void computerTurn() {
+    List emptyCells = [];
+    var random = Random();
+    if (withFriend == false) {
+      if (changePlayer == true) {
+        for (int i = 0; i < 9; i++) {
+          if (player.playerX.contains(i) == false &&
+              player.playerO.contains(i) == false) {
+            emptyCells.add(i);
+          }
         }
+        // print(emptyCells.length.toString() + 'lenght');
+        int num = random.nextInt(emptyCells.length);
+        int randomIndex = emptyCells[num];
+        player.playerO.add(randomIndex);
       }
-      // print(emptyCells.length.toString() + 'lenght');
-      int num = random.nextInt(emptyCells.length);
-      int randomIndex = emptyCells[num];
-      player.playerO.add(randomIndex);
     }
   }
 
